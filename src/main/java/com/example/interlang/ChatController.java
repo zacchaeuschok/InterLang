@@ -3,6 +3,7 @@ package com.example.interlang;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+@CrossOrigin(origins = "http://localhost:8501")
 @RestController
 @RequestMapping("/chat")
 public class ChatController {
