@@ -101,6 +101,12 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<version>2.5.0</version> <!-- Make sure to use the correct plugin version -->
+                <configuration>
+                    <jvmArguments>
+                        --add-opens java.base/java.util=ALL-UNNAMED
+                    </jvmArguments>
+                </configuration>
 			</plugin>
 
 						<plugin>
