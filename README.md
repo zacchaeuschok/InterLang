@@ -4,13 +4,7 @@
 Welcome to the InterLang App! This application allows you to interact with a healthcare system using natural language commands. You can perform various operations like adding patients, adding goal data for patients, fetching goal data, generating care plans, and more, all through a user-friendly interface.
 
 ## How It Works
-The InterLang App is built on the Spring Boot framework and uses Streamlit for the user interface. It communicates with a FHIR (Fast Healthcare Interoperability Resources) server to manage patient data and a powerful AI model from OpenAI for natural language understanding.
-
-Here's how it works:
-1. You select an operation from the available options: "Add Patient," "Add Goal Data," "Fetch Goal Data," "Generate Care Plan," or "Other Operations."
-2. Depending on your choice, you'll be presented with a form to fill out the necessary information for that operation.
-3. You enter the required details in the form fields.
-4. Once you've entered the information, you click the "Submit" button.
+The InterLang App is built on the Spring Boot framework and uses Streamlit for the chatbot interface. It communicates with a FHIR (Fast Healthcare Interoperability Resources) server to manage patient data and a powerful AI model from OpenAI for natural language understanding.
 
 The app then sends your input to the backend, where it is processed, and a response is generated based on your command. You will receive the response on the user interface.
 
