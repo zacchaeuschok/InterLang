@@ -1,50 +1,56 @@
 import streamlit as st
 import requests
-
+import time
 from logo import render_logo
 
 render_logo()
 
+# Initialize chat history
+if "messages" not in st.session_state:
+    st.session_state.messages = []
+
+# Display chat messages from history on app rerun
+for message in st.session_state.messages:
+    with st.chat_message(message["role"]):
+        st.markdown(message["content"])
+
+# Backend URL (Replace with your Java Spring Boot backend URL)
 BASE_URL = "http://localhost:8080/chat"
 
-# Operation Selection
-operation = st.selectbox("Select Operation", 
-                         ["Add Patient", "Add Goal Data", "Fetch Goal Data", "Generate Care Plan", "Other Operations"])
+# Accept user input
+if prompt := st.chat_input("What is up?"):
+    # Add user message to chat history
+    st.session_state.messages.append({"role": "user", "content": prompt})
+    # Display user message in chat message container
+    with st.chat_message("user"):
+        st.markdown(prompt)
 
-# Form for different operations
-with st.form(key='operations_form'):
-    if operation == "Add Patient":
-        st.subheader("Add a New Patient")
-        family_name = st.text_input("Family Name:")
-        given_name = st.text_input("Given Name:")
-        user_input = f"Create a patient with the data Family Name {family_name}, Given Name {given_name}."
+    # Send user input to Java Spring Boot backend and get response
+    try:
+        response = requests.post(BASE_URL, json={"user_input": prompt})
+        response.raise_for_status()
 
-    elif operation == "Add Goal Data":
-        st.subheader("Add Goal Data for a Patient")
-        patient_id = st.text_input("Patient ID:")
-        goal_key = st.selectbox("Goal Key:", ["Sleep", "Steps", "Heart Rate"])
-        goal_value = st.text_input("Goal Value:")
-        user_input = f"Add goal data for patient {patient_id} with goal key {goal_key} and goal value {goal_value}."
+        # Check if the response is in JSON format
+        if response.headers.get('Content-Type') == 'application/json':
+            assistant_response = response.json().get("text", "Sorry, I couldn't understand that.")
+        else:
+            # If not JSON, handle as plain text or other format
+            assistant_response = response.text
+    
+    except requests.RequestException as e:
+        assistant_response = f"An error occurred: {str(e)}"
 
-    elif operation == "Fetch Goal Data":
-        st.subheader("Fetch Goal Data for a Patient")
-        patient_id = st.text_input("Patient ID:")
-        user_input = f"Fetch goal data for patient {patient_id}."
-
-    elif operation == "Generate Care Plan":
-        st.subheader("Generate Care Plan for Patient")
-
-    else:
-        st.subheader("Other Operations")
-        user_input = st.text_area("Enter your command:")
-
-    # Submit button
-    submit_button = st.form_submit_button(label='Submit')
-
-# Send the data to the backend if form is submitted
-if submit_button and user_input:
-    response = requests.post(BASE_URL, json={"user_input": user_input})
-    if response.status_code == 200:
-        st.write("Response:", response.text)
-    else:
-        st.error("Error from server")
+    # Display assistant response in chat message container with streaming effect
+    with st.chat_message("assistant"):
+        message_placeholder = st.empty()
+        full_response = ""
+        # Simulate stream of response with milliseconds delay
+        for chunk in assistant_response.split():
+            full_response += chunk + " "
+            time.sleep(0.05)  # Adjust delay time as needed
+            # Add a blinking cursor to simulate typing
+            message_placeholder.markdown(full_response + "▌")
+        message_placeholder.markdown(full_response)
+    
+    # Add assistant response to chat history
+    st.session_state.messages.append({"role": "assistant", "content": assistant_response})

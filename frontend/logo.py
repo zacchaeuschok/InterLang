@@ -22,7 +22,7 @@ def render_logo():
     )
 
     st.markdown(
-        '<p><span class="big-font">🏥 Mobile Munchkins</span> <span class="small-font">by Fifteen Labs</span></p>',
+        '<p><span class="big-font">🏥 InterLang</span> <span class="small-font">by Fifteen Labs</span></p>',
         unsafe_allow_html=True,
     )
 
